@@ -1,0 +1,20 @@
+let numbers = [];
+const numberInput = document.getElementById("numberInput");
+const numberList = document.getElementById("numberList");
+const insertBtn = document.getElementById("insertBtn");
+const clearEntryBtn = document.getElementById("clearEntryBtn");
+const clearItemsBtn = document.getElementById("clearItemsBtn");
+const getTotalBtn = document.getElementById("getTotalBtn");
+const highestLowestBtn = document.getElementById("highestLowestBtn");
+const sortSelect = document.getElementById("sortSelect");
+insertBtn.addEventListener("click", function () {
+const value = Number(numberInput.value);
+if (numberInput.value === "" || value <= 0) {
+alert("Please enter a positive number.");
+return;
+}
+numbers.push(value);
+renderNumbers();
+updateTotal();
+numberInput.value = "";
+numberInput.focus();
