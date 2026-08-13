@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Javascript Web Output #1</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+margin: 20px;
+color: #111;
+}
+h1 {
+font-size: 26px;
+margin-bottom: 18px;
+}
+.input-area {
+margin-bottom: 18px;
+}
+label {
+margin-right: 5px;
+}
+#numberInput {
+width: 105px; height: 18px;
+}
+button {
+cursor: pointer;
+padding: 2px 7px;
+margin-right: 4px;
+font-size: 13px;
+}
+fieldset {
+width: 80%;
+min-height: 145px;
+border: 2px solid #ccc;
+padding: 10px 12px;
+}
+legend {
+padding: 0 2px;
+}
+.number-row {
+display: flex;
+align-items: center;
+height: 20px;
+gap: 10px;
+}
+.number {
+width: 48px;
+} .type {
+width: 45px;
+font-weight: bold;
+}
+.odd {
+color: blue;
+}
+.even {
+color: green;
+}
+.actions {
+display: flex;
+gap: 3px;
+}
+.summary {
+margin-top: 8px;
+line-height: 25px;
+font-weight: bold;
+}
+.summary span {
+text-decoration: underline;
+margin-left: 5px;
+}
+.controls { margin-top: 8px;
+}
+select {
+height: 22px;
+font-size: 13px;
+}
+</style>
+</head>
+<body>
+<h1>Javascript Web Output #1</h1>
+<div class="input-area">
+<label for="numberInput">Insert any Positive Numbers:</label>
+<input type="number" id="numberInput" min="1">
+<div style="margin-top: 3px;">
+<button onclick="insertNumber()">Insert</button>
+<button onclick="clearEntry()">Clear Entry</button>
+</div>
+</div>
+<fieldset>
+<legend>Inserted Numbers</legend>
+<div id="numberList"></div>
+<div class="summary">
+<div>HIGHEST <span id="highest">-</span></div> <div>LOWEST <span id="lowest">-</span></div>
+<div>TOTAL <span id="total">0</span></div>
+</div>
+</fieldset>
+<div class="controls">
+<button onclick="clearItems()">Clear Items</button>
+<button onclick="getTotal()">Get Total</button>
+<button onclick="findHighestLowest()">Identify Highest and Lowest Number</button>
+<label for="sortSelect">Sort by:</label>
+<select id="sortSelect" onchange="sortNumbers()">
+<option value="ascending">Ascending</option>
+<option value="descending">Descending</option>
+</select>
+</div>
+<script>
+let numbers = [];
+const numberInput = document.getElementById("numberInput");
+const numberList = document.getElementById("numberList");
+// Insert a number
+function insertNumber() {
+const value = Number(numberInput.value);
+if (value <= 0 || numberInput.value === "") {
+alert("Please enter a positive number.");
+return;
+} numbers.push(value);
+renderNumbers();
+updateTotal();
+numberInput.value = "";
+numberInput.focus();
+}
+function clearEntry() {
+numberInput.value = "";
+numberInput.focus();
+}
+function renderNumbers() {
+numberList.innerHTML = "";
+numbers.forEach((num, index) => {
+const row = document.createElement("div");
+row.className = "number-row";
+const number = document.createElement("span");
+number.className = "number";
+number.textContent = num;
+const type = document.createElement("span");
+type.className = "type";
+if (num % 2 === 0) {
+type.textContent = "EVEN"; type.classList.add("even");
+} else {
+type.textContent = "ODD";
+type.classList.add("odd");
+}
+const actions = document.createElement("span");
+actions.className = "actions";
+const removeButton = document.createElement("button");
+removeButton.textContent = "Remove";
+removeButton.onclick = function () {
+removeNumber(index);
+};
+const editButton = document.createElement("button");
+editButton.textContent = "Edit";
+editButton.onclick = function () {
+editNumber(index);
+};
+actions.appendChild(removeButton);
+actions.appendChild(editButton);
+row.appendChild(number);
+row.appendChild(type);
+row.appendChild(actions);
+numberList.appendChild(row);
+});
+} // Remove number
+function removeNumber(index) {
+numbers.splice(index, 1);
+renderNumbers();
+updateTotal();
+findHighestLowest();
+}
+// Edit number
+function editNumber(index) {
+const newValue = prompt(
+"Enter the new positive number:",
+numbers[index]
+);
+if (newValue === null) {
+return;
+}
+const value = Number(newValue);
+if (value <= 0 || isNaN(value)) {
+alert("Please enter a valid positive number.");
+return;
+}
+numbers[index] = value;
+renderNumbers(); updateTotal();
+findHighestLowest();
+}
+// Calculate total
+function calculateTotal() {
+return numbers.reduce((sum, num) => sum + num, 0);
+}
+// Update total automatically
+function updateTotal() {
+document.getElementById("total").textContent = calculateTotal();
+}
+// Get Total button
+function getTotal() {
+updateTotal();
+}
+// Find highest and lowest
+function findHighestLowest() {
+if (numbers.length === 0) {
+document.getElementById("highest").textContent = "-";
+document.getElementById("lowest").textContent = "-";
+return;
+}
+const highest = Math.max(...numbers);
+const lowest = Math.min(...numbers);
+document.getElementById("highest").textContent = highest; document.getElementById("lowest").textContent = lowest;
+}
+// Clear all items
+function clearItems() {
+numbers = [];
+renderNumbers();
+updateTotal();
+findHighestLowest();
+}
+// Sort numbers
+function sortNumbers() {
+const order = document.getElementById("sortSelect").value;
+if (order === "ascending") {
+numbers.sort((a, b) => a - b);
+} else {
+numbers.sort((a, b) => b - a);
+}
+renderNumbers();
+}
+// Allow Enter key to insert
+numberInput.addEventListener("keydown", function (event) {
+if (event.key === "Enter") {
+insertNumber();
+}
+}); </script>
+</body>
+</html>
