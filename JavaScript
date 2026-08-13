@@ -1,0 +1,136 @@
+let numbers = [];
+const numberInput = document.getElementById("numberInput");
+const numberList = document.getElementById("numberList");
+const insertBtn = document.getElementById("insertBtn");
+const clearEntryBtn = document.getElementById("clearEntryBtn");
+const clearItemsBtn = document.getElementById("clearItemsBtn");
+const getTotalBtn = document.getElementById("getTotalBtn");
+const highestLowestBtn = document.getElementById("highestLowestBtn");
+const sortSelect = document.getElementById("sortSelect");
+insertBtn.addEventListener("click", function () {
+const value = Number(numberInput.value);
+if (numberInput.value === "" || value <= 0) {
+alert("Please enter a positive number.");
+return;
+}
+numbers.push(value);
+renderNumbers();
+updateTotal();
+numberInput.value = "";
+numberInput.focus(); });
+clearEntryBtn.addEventListener("click", function () {
+numberInput.value = "";
+numberInput.focus();
+});
+function renderNumbers() {
+numberList.innerHTML = "";
+numbers.forEach(function (num, index) {
+const row = document.createElement("div");
+row.className = "number-row";
+const number = document.createElement("span");
+number.className = "number";
+number.textContent = num;
+const type = document.createElement("span");
+type.className = "type";
+if (num % 2 === 0) {
+type.textContent = "EVEN";
+type.classList.add("even");
+} else {
+type.textContent = "ODD";
+type.classList.add("odd");
+} const removeButton = document.createElement("button");
+removeButton.textContent = "Remove";
+removeButton.addEventListener("click", function () {
+removeNumber(index);
+});
+const editButton = document.createElement("button");
+editButton.textContent = "Edit";
+editButton.addEventListener("click", function () {
+editNumber(index);
+});
+row.appendChild(number);
+row.appendChild(type);
+row.appendChild(removeButton);
+row.appendChild(editButton);
+numberList.appendChild(row);
+});
+}
+function removeNumber(index) {
+numbers.splice(index, 1);
+renderNumbers();
+updateTotal();
+findHighestLowest();
+} function editNumber(index) {
+const newValue = prompt(
+"Enter a new positive number:",
+numbers[index]
+);
+if (newValue === null) {
+return;
+}
+const value = Number(newValue);
+if (isNaN(value) || value <= 0) {
+alert("Please enter a valid positive number.");
+return;
+}
+numbers[index] = value;
+renderNumbers();
+updateTotal();
+findHighestLowest();
+}
+function calculateTotal() {
+let total = 0;
+for (let i = 0; i < numbers.length; i++) { total += numbers[i];
+}
+return total;
+}
+function updateTotal() {
+document.getElementById("total").textContent =
+calculateTotal();
+}
+getTotalBtn.addEventListener("click", function () {
+updateTotal();
+});
+function findHighestLowest() {
+if (numbers.length === 0) {
+document.getElementById("highest").textContent = "-";
+document.getElementById("lowest").textContent = "-";
+return;
+}
+let highest = numbers[0];
+let lowest = numbers[0];
+for (let i = 1; i < numbers.length; i++) {
+if (numbers[i] > highest) {
+highest = numbers[i];
+} if (numbers[i] < lowest) {
+lowest = numbers[i];
+}
+}
+document.getElementById("highest").textContent = highest;
+document.getElementById("lowest").textContent = lowest;
+}
+highestLowestBtn.addEventListener("click", function () {
+findHighestLowest();
+});
+clearItemsBtn.addEventListener("click", function () {
+numbers = [];
+renderNumbers();
+updateTotal();
+findHighestLowest();
+});
+sortSelect.addEventListener("change", function () {
+if (sortSelect.value === "ascending") {
+numbers.sort(function (a, b) {
+return a - b;
+}); } else {
+numbers.sort(function (a, b) {
+return b - a;
+});
+}
+renderNumbers();
+});
+numberInput.addEventListener("keydown", function (event) {
+if (event.key === "Enter") {
+insertBtn.click();
+}
+});
